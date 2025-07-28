@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username: jvezolles
+  - include:
+      file: version/db.changelog.version-0.0.1.yaml
+      relativeToChangelogFile: true

@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: jvezolles
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: long
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: birthdate
+                  type: timestamp
+              - column:
+                  name: country
+                  type: varchar(100)
+              - column:
+                  name: phone
+                  type: varchar(15)
+              - column:
+                  name: gender
+                  type: varchar(100)
+              - column:
+                  name: email
+                  type: varchar(100)
