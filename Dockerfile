@@ -7,6 +7,7 @@
 # ===========================
 ARG MAVEN_VERSION=3.9.11
 ARG JAVA_VERSION=24
+ARG JRE_VERSION=24.0.2_12
 FROM maven:${MAVEN_VERSION}-eclipse-temurin-${JAVA_VERSION} AS builder
 
 # Set the default locale to UTF-8 to ensure proper character encoding.
@@ -42,7 +43,7 @@ RUN mvn -B -Dmaven.repo.local=/home/appuser/.m2/repository clean package -Dmaven
 # ===========================
 # Step 2: Runtime
 # ===========================
-FROM eclipse-temurin:${JAVA_VERSION}-jre
+FROM eclipse-temurin:${JRE_VERSION}-jre
 
 # Set the default locale to UTF-8 to ensure proper character encoding.
 ENV LANG=C.UTF-8
