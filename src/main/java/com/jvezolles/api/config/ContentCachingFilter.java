@@ -14,7 +14,7 @@ import java.io.IOException;
 
 /**
  * Content caching filter
- * Used with highest precedence order to be first at injection
+ * Used with the highest precedence order to be first at injection
  *
  * @author Vezolles
  */

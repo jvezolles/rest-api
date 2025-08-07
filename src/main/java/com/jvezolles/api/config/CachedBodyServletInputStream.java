@@ -17,7 +17,7 @@ import java.io.InputStream;
 @Slf4j
 public class CachedBodyServletInputStream extends ServletInputStream {
 
-    private InputStream cachedBodyInputStream;
+    private final InputStream cachedBodyInputStream;
 
     /**
      * Default constructor for CachedBodyServletInputStream

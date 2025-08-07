@@ -19,11 +19,11 @@
     </appender>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
                 %date{ISO8601} %blue(%-5level) [%green(%thread)] %yellow(%class).%method : %message%n%throwable
             </Pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <logger name="com.jvezolles.api" level="debug" additivity="false">

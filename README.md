@@ -10,30 +10,30 @@ This project is developed with:
 
 ## Prerequisites
 
-You must install OpenJDK on your machine and define the `JAVA_HOME` environment variable.
+You must install:
+- OpenJDK on your machine and define the `JAVA_HOME` environment variable
+- Maven on your machine and define the `MAVEN_HOME` environment variable
 
-This variable should point to your local OpenJDK installation.
+These variables should point to your local OpenJDK and Maven installation.
 
-You also need to add `%JAVA_HOME%\bin` to your system's Path environment variable.
+You also need to add `%JAVA_HOME%\bin` and `%MAVEN_HOME%\bin` to your system's Path environment variable.
 
 ## Build
 
-To package the application, a Maven build is performed without any profile.
-
-It is not necessary to install Maven locally; the tooling is included in the sources.
+To package the local application, a Maven build is performed without any profile.
 
 This build performs:
 
 - Compilation of all project dependencies
 - Execution of all unit tests
-- Generation of the final WAR file
+- Generation of the final JAR file
 
 To launch the build:
 
-- In a Windows command prompt, go to the `api-users` folder
-- Execute the command: `.\mvnw clean install`
+- In a Windows command prompt, go to the `rest-api` folder
+- Execute the command: `mvn clean install`
 
-The result of the build can be found in the `target` folder of the `api-users` project.
+The result of the build can be found in the `target` folder of the `rest-api` project.
 
 This folder contains the WAR file with the application and its associated Javadoc.
 
@@ -51,8 +51,8 @@ The application is started using Maven.
 
 To launch the application:
 
-- In a Windows command prompt, go to the `api-users` folder
-- Execute the command: `.\mvnw spring-boot:run`
+- In a Windows command prompt, go to the `rest-api` folder
+- Execute the command: `mvn spring-boot:run`
 
 The application becomes available after Spring Boot has started.
 
@@ -63,12 +63,3 @@ The APIs are accessible at the following addresses:
 - Retrieve a user: `GET http://localhost:8080/user/<username>`
 - Create a user: `POST http://localhost:8080/user`, with the user JSON in the request body
 - Delete a user: `DELETE http://localhost:8080/user/<username>`
-
-## Documentation
-
-Code documentation is available in the project’s `target` folder at `target\apidocs\index.html`.  
-This documentation is only available **after a build**.
-
-API documentation is available via Swagger at:  
-http://localhost:8080/swagger-ui.html.  
-This documentation is only available **after the application has started**.

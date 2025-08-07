@@ -54,8 +54,8 @@ class UserE2ETest {
     @Autowired
     private UserRepository userRepository;
 
-    private Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
-    private LocalDate dateDTO = LocalDate.of(2002, 1, 8);
+    private final Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+    private final LocalDate dateDTO = LocalDate.of(2002, 1, 8);
 
     /**
      * Before each test, add user
@@ -101,17 +101,13 @@ class UserE2ETest {
     @AfterEach
     void tearDown() {
         Optional<User> user = userRepository.findByUsername("test");
-        if (user.isPresent()) {
-            userRepository.delete(user.get());
-        }
+        user.ifPresent(value -> userRepository.delete(value));
+
         Optional<User> user2 = userRepository.findByUsername("test2");
-        if (user2.isPresent()) {
-            userRepository.delete(user2.get());
-        }
+        user2.ifPresent(value -> userRepository.delete(value));
+
         Optional<User> user3 = userRepository.findByUsername("test3");
-        if (user3.isPresent()) {
-            userRepository.delete(user3.get());
-        }
+        user3.ifPresent(value -> userRepository.delete(value));
     }
 
     /**
