@@ -1,36 +1,18 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:jvezolles
-    username: jvezolles
-    password: jvezolles
-    driverClassName: org.h2.Driver
+  profiles:
+    default: "dev"
   jpa:
     show-sql: false
     open-in-view: false
     hibernate:
+
       ddl-auto: create-drop
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: false
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yaml
   sql:
     init:
       encoding: UTF-8
-logging:
-  level:
-    root: INFO
-    org:
-      springframework:
-        web:
-          filter:
-            CommonsRequestLoggingFilter: DEBUG
-    com:
-      jvezolles:
-        api: DEBUG
 server:
   error:
     include-message: always

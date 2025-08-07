@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:jvezolles
+    username: restapis
+    password: restapis
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: false
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: DEBUG
+    com:
+      jvezolles:
+        api: DEBUG

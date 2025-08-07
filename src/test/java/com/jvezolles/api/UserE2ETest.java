@@ -1,10 +1,10 @@
 package com.jvezolles.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jvezolles.api.user.UserRepository;
 import com.jvezolles.api.user.dto.UserDTO;
 import com.jvezolles.api.user.model.User;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,8 +54,8 @@ class UserE2ETest {
     @Autowired
     private UserRepository userRepository;
 
-    private Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
-    private LocalDate dateDTO = LocalDate.of(2002, 1, 8);
+    private final Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+    private final LocalDate dateDTO = LocalDate.of(2002, 1, 8);
 
     /**
      * Before each test, add user
@@ -101,17 +101,13 @@ class UserE2ETest {
     @AfterEach
     void tearDown() {
         Optional<User> user = userRepository.findByUsername("test");
-        if (user.isPresent()) {
-            userRepository.delete(user.get());
-        }
+        user.ifPresent(value -> userRepository.delete(value));
+
         Optional<User> user2 = userRepository.findByUsername("test2");
-        if (user2.isPresent()) {
-            userRepository.delete(user2.get());
-        }
+        user2.ifPresent(value -> userRepository.delete(value));
+
         Optional<User> user3 = userRepository.findByUsername("test3");
-        if (user3.isPresent()) {
-            userRepository.delete(user3.get());
-        }
+        user3.ifPresent(value -> userRepository.delete(value));
     }
 
     /**
@@ -171,12 +167,12 @@ class UserE2ETest {
         UserDTO userDTOReceived = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
         assertNotNull(userDTOReceived);
-        assertEquals("test", userDTOReceived.getUsername());
-        assertEquals(dateDTO, userDTOReceived.getBirthdate());
-        assertEquals("France", userDTOReceived.getCountry());
-        assertEquals("0612345678", userDTOReceived.getPhone());
-        assertEquals("man", userDTOReceived.getGender());
-        assertEquals("test@test.com", userDTOReceived.getEmail());
+        assertEquals("test", userDTOReceived.username());
+        assertEquals(dateDTO, userDTOReceived.birthdate());
+        assertEquals("France", userDTOReceived.country());
+        assertEquals("0612345678", userDTOReceived.phone());
+        assertEquals("man", userDTOReceived.gender());
+        assertEquals("test@test.com", userDTOReceived.email());
     }
 
     /**
@@ -210,12 +206,12 @@ class UserE2ETest {
         UserDTO userDTOReceived = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
         assertNotNull(userDTOReceived);
-        assertEquals("testcreation", userDTOReceived.getUsername());
-        assertEquals(dateDTO, userDTOReceived.getBirthdate());
-        assertEquals("France", userDTOReceived.getCountry());
-        assertEquals("0612345678", userDTOReceived.getPhone());
-        assertEquals("man", userDTOReceived.getGender());
-        assertEquals("test@test.com", userDTOReceived.getEmail());
+        assertEquals("testcreation", userDTOReceived.username());
+        assertEquals(dateDTO, userDTOReceived.birthdate());
+        assertEquals("France", userDTOReceived.country());
+        assertEquals("0612345678", userDTOReceived.phone());
+        assertEquals("man", userDTOReceived.gender());
+        assertEquals("test@test.com", userDTOReceived.email());
     }
 
     /**

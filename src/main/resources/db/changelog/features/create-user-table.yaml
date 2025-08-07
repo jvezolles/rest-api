@@ -4,11 +4,11 @@ databaseChangeLog:
       author: jvezolles
       changes:
         - createTable:
-            tableName: user
+            tableName: users
             columns:
               - column:
                   name: id
-                  type: long
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     primaryKey: true

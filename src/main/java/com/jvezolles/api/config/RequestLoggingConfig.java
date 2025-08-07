@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.stream.Collectors;
@@ -46,7 +45,7 @@ public class RequestLoggingConfig {
         Object result = null;
 
         // Log incoming request
-        log.info("GET " + request.getRequestURL());
+        log.info("GET {}", request.getRequestURL());
         long startTime = System.currentTimeMillis();
 
         try {
@@ -58,7 +57,7 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("GET " + request.getRequestURL() + " in " + (endtime - startTime) + "ms with body : " + mapper.writeValueAsString(result));
+            log.info("GET {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
         }
     }
 
@@ -76,7 +75,7 @@ public class RequestLoggingConfig {
         String body = request.getReader().lines().collect(Collectors.joining());
 
         // Log incoming request
-        log.info("POST " + request.getRequestURL() + " with body : " + body);
+        log.info("POST {} with body : {}", request.getRequestURL(), body);
         long startTime = System.currentTimeMillis();
 
         try {
@@ -88,7 +87,7 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("POST " + request.getRequestURL() + " in " + (endtime - startTime) + "ms with body : " + mapper.writeValueAsString(result));
+            log.info("POST {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
         }
     }
 
@@ -103,7 +102,7 @@ public class RequestLoggingConfig {
     public Object logAroundDeleteMapping(ProceedingJoinPoint joinPoint) throws Throwable {
 
         // Log incoming request
-        log.info("DELETE " + request.getRequestURL());
+        log.info("DELETE {}", request.getRequestURL());
         long startTime = System.currentTimeMillis();
 
         try {
@@ -114,7 +113,7 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("DELETE " + request.getRequestURL() + " in " + (endtime - startTime) + "ms");
+            log.info("DELETE {} in {}ms", request.getRequestURL(), endtime - startTime);
         }
     }
 
