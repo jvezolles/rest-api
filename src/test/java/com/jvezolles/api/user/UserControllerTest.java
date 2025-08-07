@@ -73,12 +73,12 @@ class UserControllerTest {
 
         verify(userService).getUser("test");
         assertNotNull(result);
-        assertEquals("test", result.getUsername());
-        assertEquals(dateDTO, result.getBirthdate());
-        assertEquals("France", result.getCountry());
-        assertEquals("0612345678", result.getPhone());
-        assertEquals("man", result.getGender());
-        assertEquals("test@test.com", result.getEmail());
+        assertEquals("test", result.username());
+        assertEquals(dateDTO, result.birthdate());
+        assertEquals("France", result.country());
+        assertEquals("0612345678", result.phone());
+        assertEquals("man", result.gender());
+        assertEquals("test@test.com", result.email());
     }
 
     @Test
@@ -90,12 +90,12 @@ class UserControllerTest {
 
         verify(userService).createUser(userWithoutId);
         assertNotNull(result);
-        assertEquals("test", result.getUsername());
-        assertEquals(dateDTO, result.getBirthdate());
-        assertEquals("France", result.getCountry());
-        assertEquals("0612345678", result.getPhone());
-        assertEquals("man", result.getGender());
-        assertEquals("test@test.com", result.getEmail());
+        assertEquals("test", result.username());
+        assertEquals(dateDTO, result.birthdate());
+        assertEquals("France", result.country());
+        assertEquals("0612345678", result.phone());
+        assertEquals("man", result.gender());
+        assertEquals("test@test.com", result.email());
     }
 
     @Test
