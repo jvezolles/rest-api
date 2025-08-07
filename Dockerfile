@@ -6,7 +6,7 @@
 # Step 1: Build with Maven
 # ===========================
 ARG MAVEN_VERSION=3.9.11
-ARG JAVA_VERSION=21
+ARG JAVA_VERSION=24
 FROM maven:${MAVEN_VERSION}-eclipse-temurin-${JAVA_VERSION} AS builder
 
 # Set the default locale to UTF-8 to ensure proper character encoding.
