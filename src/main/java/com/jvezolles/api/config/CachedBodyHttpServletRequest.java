@@ -21,7 +21,7 @@ public class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
     /**
      * Body in cache
      */
-    private byte[] cachedBody;
+    private final byte[] cachedBody;
 
     /**
      * Default constructor for CachedBodyHttpServletRequest

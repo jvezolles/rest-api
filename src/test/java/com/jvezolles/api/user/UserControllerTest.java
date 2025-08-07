@@ -39,15 +39,15 @@ class UserControllerTest {
     @InjectMocks
     private UserController userController = new UserControllerImpl(userMapper, userService);
 
-    private Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
-    private User userWithoutId = new User(null, "test", date, "France", "0612345678", "man", "test@test.com");
-    private User user = new User(1L, "test", date, "France", "0612345678", "man", "test@test.com");
-    private User user2 = new User(2L, "test2", date, "France", "0612345678", "man", "test@test.com");
-    private User user3 = new User(3L, "test3", date, "France", "0612345678", "man", "test@test.com");
-    private LocalDate dateDTO = LocalDate.of(2002, 1, 8);
-    private UserDTO userDTO = new UserDTO("test", dateDTO, "France", "0612345678", "man", "test@test.com");
-    private UserDTO userDTO2 = new UserDTO("test2", dateDTO, "France", "0612345678", "man", "test@test.com");
-    private UserDTO userDTO3 = new UserDTO("test3", dateDTO, "France", "0612345678", "man", "test@test.com");
+    private final Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+    private final User userWithoutId = new User(null, "test", date, "France", "0612345678", "man", "test@test.com");
+    private final User user = new User(1L, "test", date, "France", "0612345678", "man", "test@test.com");
+    private final User user2 = new User(2L, "test2", date, "France", "0612345678", "man", "test@test.com");
+    private final User user3 = new User(3L, "test3", date, "France", "0612345678", "man", "test@test.com");
+    private final LocalDate dateDTO = LocalDate.of(2002, 1, 8);
+    private final UserDTO userDTO = new UserDTO("test", dateDTO, "France", "0612345678", "man", "test@test.com");
+    private final UserDTO userDTO2 = new UserDTO("test2", dateDTO, "France", "0612345678", "man", "test@test.com");
+    private final UserDTO userDTO3 = new UserDTO("test3", dateDTO, "France", "0612345678", "man", "test@test.com");
 
     @Test
     void testGetAllUser() {
@@ -73,12 +73,12 @@ class UserControllerTest {
 
         verify(userService).getUser("test");
         assertNotNull(result);
-        assertEquals("test", result.getUsername());
-        assertEquals(dateDTO, result.getBirthdate());
-        assertEquals("France", result.getCountry());
-        assertEquals("0612345678", result.getPhone());
-        assertEquals("man", result.getGender());
-        assertEquals("test@test.com", result.getEmail());
+        assertEquals("test", result.username());
+        assertEquals(dateDTO, result.birthdate());
+        assertEquals("France", result.country());
+        assertEquals("0612345678", result.phone());
+        assertEquals("man", result.gender());
+        assertEquals("test@test.com", result.email());
     }
 
     @Test
@@ -90,12 +90,12 @@ class UserControllerTest {
 
         verify(userService).createUser(userWithoutId);
         assertNotNull(result);
-        assertEquals("test", result.getUsername());
-        assertEquals(dateDTO, result.getBirthdate());
-        assertEquals("France", result.getCountry());
-        assertEquals("0612345678", result.getPhone());
-        assertEquals("man", result.getGender());
-        assertEquals("test@test.com", result.getEmail());
+        assertEquals("test", result.username());
+        assertEquals(dateDTO, result.birthdate());
+        assertEquals("France", result.country());
+        assertEquals("0612345678", result.phone());
+        assertEquals("man", result.gender());
+        assertEquals("test@test.com", result.email());
     }
 
     @Test

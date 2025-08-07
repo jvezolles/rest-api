@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/restapis
+    username: restapis
+    password: restapis
+    driverClassName: org.postgresql.Driver
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web:
+          filter:
+            CommonsRequestLoggingFilter: INFO
+    com:
+      jvezolles:
+        api: WARN

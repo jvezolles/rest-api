@@ -38,7 +38,7 @@ RUN mvn -B -Dmaven.repo.local=/home/appuser/.m2/repository dependency:go-offline
 COPY --chown=root:root --chmod=755 src ./src
 
 # Build the project and create the jar
-RUN mvn -B -Dmaven.repo.local=/home/appuser/.m2/repository clean package -Dmaven.test.skip=true
+RUN mvn -B -Dmaven.repo.local=/home/appuser/.m2/repository clean package -Pprod -Dmaven.test.skip=true
 
 # ===========================
 # Step 2: Runtime

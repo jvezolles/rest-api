@@ -43,10 +43,10 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService = new UserServiceImpl(clock, userRepository);
 
-    private Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
-    private User user = new User(1L, "test", date, "France", "0612345678", "man", "test@test.com");
-    private User user2 = new User(2L, "test2", date, "France", "0612345678", "man", "test@test.com");
-    private User user3 = new User(3L, "test3", date, "France", "0612345678", "man", "test@test.com");
+    private final Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+    private final User user = new User(1L, "test", date, "France", "0612345678", "man", "test@test.com");
+    private final User user2 = new User(2L, "test2", date, "France", "0612345678", "man", "test@test.com");
+    private final User user3 = new User(3L, "test3", date, "France", "0612345678", "man", "test@test.com");
 
     @BeforeEach
     void setUp() {
