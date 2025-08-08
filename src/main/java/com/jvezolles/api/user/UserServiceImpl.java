@@ -1,8 +1,6 @@
 package com.jvezolles.api.user;
 
-import com.jvezolles.api.user.exception.UserCreateException;
-import com.jvezolles.api.user.exception.UserDeleteException;
-import com.jvezolles.api.user.exception.UserNotFoundException;
+import com.jvezolles.api.user.exception.*;
 import com.jvezolles.api.user.model.User;
 import com.jvezolles.api.util.Constants;
 import lombok.AllArgsConstructor;
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public User getUser(String username) throws UserNotFoundException {
 
         // Find user if exists, else throw error user not found
-        return userRepository.findByUsername(username)
+        return userRepository.findByUsername(username.toLowerCase())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
@@ -83,20 +81,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user) throws UserCreateException {
 
-        // Convert dates to local date time
-        LocalDateTime now = LocalDateTime.now(clock);
-        LocalDateTime birthdate = user.getBirthdate().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime();
-
-        // If user is not adult French, throw error user cannot be created, user must be adult French
-        if (ChronoUnit.YEARS.between(birthdate, now) < 18 || !Constants.FRANCE.equalsIgnoreCase(user.getCountry())) {
-            throw new UserCreateException("User cannot be created, user must be adult French");
-        }
+        // Check if user is valid
+        checkUser(user);
 
         // Find user by username
-        Optional<User> userFound = userRepository.findByUsername(user.getUsername());
+        Optional<User> optUserFound = userRepository.findByUsername(user.getUsername().toLowerCase());
 
         // If user not exist
-        if (userFound.isEmpty()) {
+        if (optUserFound.isEmpty()) {
 
             try {
                 // Persist new user
@@ -112,6 +104,47 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public User updateUser(User user) throws UserUpdateException {
+
+        // Check if user is valid
+        checkUser(user);
+
+        // Find user by username
+        Optional<User> optUserFound = userRepository.findByUsername(user.getUsername().toLowerCase());
+
+        // If user exist
+        if (optUserFound.isPresent()) {
+
+            try {
+                // Set user id to update
+                user.setId(optUserFound.get().getId());
+
+                // Persist updated user
+                return userRepository.save(user);
+
+            } catch (IllegalArgumentException e) {
+                throw new UserUpdateException("User cannot be updated");
+            }
+
+        } else {
+            // Throw error user not exists
+            throw new UserUpdateException("User cannot be updated, user not exists");
+        }
+    }
+
+    @Override
+    public User replaceUser(String username, User user) throws UserReplaceException {
+
+        try {
+            deleteUser(username);
+            return createUser(user);
+
+        } catch (Exception e) {
+            throw new UserReplaceException("User cannot be replaced, " + e.getMessage());
+        }
+    }
+
     /**
      * Service to delete user
      *
@@ -122,7 +155,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String username) throws UserDeleteException {
 
         // Find user if exists, else throw error user does not exist
-        User userFound = userRepository.findByUsername(username)
+        User userFound = userRepository.findByUsername(username.toLowerCase())
                 .orElseThrow(() -> new UserDeleteException("User cannot be deleted, user does not exist"));
 
         try {
@@ -132,6 +165,21 @@ public class UserServiceImpl implements UserService {
         } catch (IllegalArgumentException e) {
             throw new UserDeleteException("User cannot be deleted");
         }
+    }
+
+    private void checkUser(User user) throws UserNotFrenchAdultException {
+
+        // Convert dates to local date time
+        LocalDateTime now = LocalDateTime.now(clock);
+        LocalDateTime birthdate = user.getBirthdate().toInstant().atZone(ZoneOffset.UTC).toLocalDateTime();
+
+        // If user is not adult French, throw error user cannot be created, user must be adult French
+        if (ChronoUnit.YEARS.between(birthdate, now) < 18 || !Constants.FRANCE.equalsIgnoreCase(user.getCountry())) {
+            throw new UserNotFrenchAdultException("User must be adult French");
+        }
+
+        // Format username to lower case
+        user.setUsername(user.getUsername().toLowerCase());
     }
 
 }
