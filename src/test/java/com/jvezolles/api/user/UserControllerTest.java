@@ -42,6 +42,7 @@ class UserControllerTest {
     private final Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
     private final User userWithoutId = new User(null, "test", date, "France", "0612345678", "man", "test@test.com");
     private final User user = new User(1L, "test", date, "France", "0612345678", "man", "test@test.com");
+    private final User userUpdated = new User(1L, "test2", date, "France", "0612345678", "female", "test@test.com");
     private final User user2 = new User(2L, "test2", date, "France", "0612345678", "man", "test@test.com");
     private final User user3 = new User(3L, "test3", date, "France", "0612345678", "man", "test@test.com");
     private final LocalDate dateDTO = LocalDate.of(2002, 1, 8);
@@ -52,9 +53,7 @@ class UserControllerTest {
     @Test
     void testGetAllUser() {
 
-        List<User> users = List.of(user, user2, user3);
-
-        when(userService.getUsers(1, 3)).thenReturn(users);
+        when(userService.getUsers(1, 3)).thenReturn(List.of(user, user2, user3));
 
         List<UserDTO> result = userController.getUsers(1, 3);
 
@@ -86,16 +85,29 @@ class UserControllerTest {
 
         when(userService.createUser(userWithoutId)).thenReturn(user);
 
-        UserDTO result = userController.createUser(userDTO);
+        userController.createUser(userDTO);
 
         verify(userService).createUser(userWithoutId);
-        assertNotNull(result);
-        assertEquals("test", result.username());
-        assertEquals(dateDTO, result.birthdate());
-        assertEquals("France", result.country());
-        assertEquals("0612345678", result.phone());
-        assertEquals("man", result.gender());
-        assertEquals("test@test.com", result.email());
+    }
+
+    @Test
+    void testUpdateUser() {
+
+        when(userService.updateUser(userWithoutId)).thenReturn(userUpdated);
+
+        userController.updateUser(userDTO);
+
+        verify(userService).updateUser(userWithoutId);
+    }
+
+    @Test
+    void testReplaceUser() {
+
+        when(userService.replaceUser("test", userWithoutId)).thenReturn(userUpdated);
+
+        userController.replaceUser("test", userDTO);
+
+        verify(userService).replaceUser("test", userWithoutId);
     }
 
     @Test

@@ -28,4 +28,6 @@ jvezolles:
       get-all: "/user"
       get: "/user/{username}"
       create: "/user"
+      update: "/user"
+      replace: "/user/{username}"
       delete: "/user/{username}"

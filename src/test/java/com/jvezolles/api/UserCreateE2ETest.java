@@ -1,6 +1,5 @@
 package com.jvezolles.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jvezolles.api.user.UserRepository;
 import com.jvezolles.api.user.dto.UserDTO;
@@ -8,8 +7,6 @@ import com.jvezolles.api.user.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,15 +19,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doReturn;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -40,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserE2ETest {
+class UserCreateE2ETest {
 
     @Mock
     private Clock clock;
@@ -54,8 +47,11 @@ class UserE2ETest {
     @Autowired
     private UserRepository userRepository;
 
-    private final Date date = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
-    private final LocalDate dateDTO = LocalDate.of(2002, 1, 8);
+    private final Date dateArthur = Date.from(LocalDate.now().minusYears(40).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+    private final Date dateGuenievre = Date.from(LocalDate.now().minusYears(39).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+    private final Date dateMerlin = Date.from(LocalDate.now().minusYears(70).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+
+    private final LocalDate dateGuenievreDTO = LocalDate.now().minusYears(39);
 
     /**
      * Before each test, add user
@@ -64,33 +60,33 @@ class UserE2ETest {
     void setUp() {
 
         User user = new User();
-        user.setUsername("test");
-        user.setBirthdate(date);
+        user.setUsername("arthur");
+        user.setBirthdate(dateArthur);
         user.setCountry("France");
-        user.setPhone("0612345678");
+        user.setPhone("0611111111");
         user.setGender("man");
-        user.setEmail("test@test.com");
+        user.setEmail("roi@kaamelott.com");
         userRepository.save(user);
 
         User user2 = new User();
-        user2.setUsername("test2");
-        user2.setBirthdate(date);
+        user2.setUsername("guenièvre");
+        user2.setBirthdate(dateGuenievre);
         user2.setCountry("France");
-        user2.setPhone("0612345678");
-        user2.setGender("man");
-        user2.setEmail("test@test.com");
+        user2.setPhone("0622222222");
+        user2.setGender("female");
+        user2.setEmail("reine@kaamelott.com");
         userRepository.save(user2);
 
         User user3 = new User();
-        user3.setUsername("test3");
-        user3.setBirthdate(date);
+        user3.setUsername("merlin");
+        user3.setBirthdate(dateMerlin);
         user3.setCountry("France");
-        user3.setPhone("0612345678");
+        user3.setPhone("0633333333");
         user3.setGender("man");
-        user3.setEmail("test@test.com");
+        user3.setEmail("merlin@kaamelott.com");
         userRepository.save(user3);
 
-        Clock fixedClock = Clock.fixed(LocalDate.of(2020, 1, 8).atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC);
+        Clock fixedClock = Clock.fixed(LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant(), ZoneOffset.UTC);
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
     }
@@ -100,91 +96,7 @@ class UserE2ETest {
      */
     @AfterEach
     void tearDown() {
-        Optional<User> user = userRepository.findByUsername("test");
-        user.ifPresent(value -> userRepository.delete(value));
-
-        Optional<User> user2 = userRepository.findByUsername("test2");
-        user2.ifPresent(value -> userRepository.delete(value));
-
-        Optional<User> user3 = userRepository.findByUsername("test3");
-        user3.ifPresent(value -> userRepository.delete(value));
-    }
-
-    /**
-     * Test get all user's details
-     *
-     * @throws Exception if error occurs
-     */
-    @Test
-    void testGetAllUsers() throws Exception {
-
-        MvcResult result = mockMvc.perform(get("/user"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        List<UserDTO> usersDTOReceived = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<UserDTO>>() {
-        });
-
-        assertNotNull(usersDTOReceived);
-        assertThat(usersDTOReceived.size(), is(3));
-    }
-
-    /**
-     * Test get all user's details with page and size
-     *
-     * @throws Exception if error occurs
-     */
-    @ParameterizedTest
-    @CsvSource({
-            "0, 2, 2",
-            "1, 2, 1"
-    })
-    void testGetAllUsersWithPageAndSize(Integer page, Integer size, int resultSize) throws Exception {
-
-        MvcResult result = mockMvc.perform(get("/user?page=" + page + "&size=" + size))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        List<UserDTO> usersDTOReceived = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<UserDTO>>() {
-        });
-
-        assertNotNull(usersDTOReceived);
-        assertThat(usersDTOReceived.size(), is(resultSize));
-    }
-
-    /**
-     * Test get user's details
-     *
-     * @throws Exception if error occurs
-     */
-    @Test
-    void testGetUser() throws Exception {
-
-        MvcResult result = mockMvc.perform(get("/user/test"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        UserDTO userDTOReceived = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
-
-        assertNotNull(userDTOReceived);
-        assertEquals("test", userDTOReceived.username());
-        assertEquals(dateDTO, userDTOReceived.birthdate());
-        assertEquals("France", userDTOReceived.country());
-        assertEquals("0612345678", userDTOReceived.phone());
-        assertEquals("man", userDTOReceived.gender());
-        assertEquals("test@test.com", userDTOReceived.email());
-    }
-
-    /**
-     * Test fail if user not exists
-     *
-     * @throws Exception if error occurs
-     */
-    @Test
-    void testGetUserNotExist() throws Exception {
-
-        mockMvc.perform(get("/user/testnotexist"))
-                .andExpect(status().isNotFound());
+        userRepository.findAll().forEach(value -> userRepository.delete(value));
     }
 
     /**
@@ -195,7 +107,8 @@ class UserE2ETest {
     @Test
     void testCreateUser() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, "France", "0612345678", "man", "test@test.com");
+        LocalDate dateKaradocDTO = LocalDate.now().minusYears(40);
+        UserDTO user = new UserDTO("Karadoc", dateKaradocDTO, "France", "0644444444", "man", "karadoc@kaamelott.com");
 
         MvcResult result = mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -206,12 +119,12 @@ class UserE2ETest {
         UserDTO userDTOReceived = objectMapper.readValue(result.getResponse().getContentAsString(), UserDTO.class);
 
         assertNotNull(userDTOReceived);
-        assertEquals("testcreation", userDTOReceived.username());
-        assertEquals(dateDTO, userDTOReceived.birthdate());
+        assertEquals("karadoc", userDTOReceived.username());
+        assertEquals(dateKaradocDTO, userDTOReceived.birthdate());
         assertEquals("France", userDTOReceived.country());
-        assertEquals("0612345678", userDTOReceived.phone());
+        assertEquals("0644444444", userDTOReceived.phone());
         assertEquals("man", userDTOReceived.gender());
-        assertEquals("test@test.com", userDTOReceived.email());
+        assertEquals("karadoc@kaamelott.com", userDTOReceived.email());
     }
 
     /**
@@ -235,7 +148,7 @@ class UserE2ETest {
     @Test
     void testCreateUserExist() throws Exception {
 
-        UserDTO user = new UserDTO("test", dateDTO, "France", "0612345678", "man", "test@test.com");
+        UserDTO user = new UserDTO("Guenièvre", dateGuenievreDTO, "France", "0622222222", "female", "reine@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -251,8 +164,8 @@ class UserE2ETest {
     @Test
     void testCreateUserNotAdult() throws Exception {
 
-        LocalDate dateNotAdult = LocalDate.of(2002, 1, 9);
-        UserDTO user = new UserDTO("test", dateNotAdult, "France", "0612345678", "man", "test@test.com");
+        LocalDate dateYvainDTO = LocalDate.now().minusYears(17);
+        UserDTO user = new UserDTO("Yvain", dateYvainDTO, "France", "0655555555", "man", "yvain@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -268,7 +181,8 @@ class UserE2ETest {
     @Test
     void testCreateUserNotFrench() throws Exception {
 
-        UserDTO user = new UserDTO("test", dateDTO, "Spain", "0612345678", "man", "test@test.com");
+        LocalDate datePercevalDTO = LocalDate.now().minusYears(50);
+        UserDTO user = new UserDTO("Perceval", datePercevalDTO, "Pays de galles", "0666666666", "man", "perceval@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -284,7 +198,8 @@ class UserE2ETest {
     @Test
     void testCreateUserUsernameMissing() throws Exception {
 
-        UserDTO user = new UserDTO(null, dateDTO, "France", "0612345678", "man", "test@test.com");
+        LocalDate dateKaradocDTO = LocalDate.now().minusYears(40);
+        UserDTO user = new UserDTO(null, dateKaradocDTO, "France", "0644444444", "man", "karadoc@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -300,7 +215,8 @@ class UserE2ETest {
     @Test
     void testCreateUserUsernameTooLong() throws Exception {
 
-        UserDTO user = new UserDTO("testtoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolong", dateDTO, "France", "0612345678", "man", "test@test.com");
+        LocalDate dateEliasDTO = LocalDate.now().minusYears(65);
+        UserDTO user = new UserDTO("Elias de Kelliwic’h, dit « le Fourbe », grand enchanteur du Nord, meneur des loups de Calédonie, pourfendeur du dragon des neiges, concepteur de la potion de toute puissance, prophète des astres et grand ennemi de Merlin", dateEliasDTO, "France", "0677777777", "man", "elias@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -316,7 +232,7 @@ class UserE2ETest {
     @Test
     void testCreateUserBirthdateMissing() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", null, "France", "0612345678", "man", "test@test.com");
+        UserDTO user = new UserDTO("La Dame du Lac", null, "France", "0688888888", "female", "damedulac@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -332,7 +248,16 @@ class UserE2ETest {
     @Test
     void testCreateUserBirthdateWrongFormat() throws Exception {
 
-        String json = "{\"username\":\"testcreation\",\"birthdate\":\"2002-01\",\"country\":\"France\",\"phone\":\"0612345678\",\"gender\":\"man\",\"email\":\"test@test.com\"}";
+        String json = """
+                {
+                  "username": "La Dame du Lac",
+                  "birthdate": "1900-01",
+                  "country": "France",
+                  "phone": "0688888888",
+                  "gender": "female",
+                  "email": "damedulac@kaamelott.com"
+                }
+                """;
 
         mockMvc.perform(post("/user")
                         .content(json)
@@ -348,7 +273,8 @@ class UserE2ETest {
     @Test
     void testCreateUserCountryMissing() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, null, "0612345678", "man", "test@test.com");
+        LocalDate dateBlaiseDTO = LocalDate.now().minusYears(55);
+        UserDTO user = new UserDTO("Blaise", dateBlaiseDTO, null, "0699999999", "man", "pretre@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -364,7 +290,8 @@ class UserE2ETest {
     @Test
     void testCreateUserCountryTooLong() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, "Francetoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolong", "0612345678", "man", "test@test.com");
+        LocalDate dateBlaiseDTO = LocalDate.now().minusYears(55);
+        UserDTO user = new UserDTO("Blaise", dateBlaiseDTO, "Kaamelott la plus belle ville de toute la Bretagne et du monde, tout le reste n'est habité que par des païens", "0699999999", "man", "pretre@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -380,7 +307,8 @@ class UserE2ETest {
     @Test
     void testCreateUserPhoneTooLong() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, "France", "0612345678toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolong", "man", "test@test.com");
+        LocalDate dateCalogrenantDTO = LocalDate.now().minusYears(60);
+        UserDTO user = new UserDTO("Calogrenant", dateCalogrenantDTO, "France", "necherchezpasàmejoindrejesuisoccupé", "man", "cestmoilevrairoi@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -396,7 +324,8 @@ class UserE2ETest {
     @Test
     void testCreateUserGenderTooLong() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, "France", "0612345678", "gendertoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolong", "test@test.com");
+        LocalDate dateVenecDTO = LocalDate.now().minusYears(35);
+        UserDTO user = new UserDTO("Venec", dateVenecDTO, "France", "0600000000", "HommeOuFemmeOuLesbienneOuGayOuBisexuelleOuTransOuQueerOuIntersexeOuAsexuellesOuTransidentitaireOuPlus", "venec@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -412,7 +341,8 @@ class UserE2ETest {
     @Test
     void testCreateUserMailTooLong() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, "France", "0612345678", "man", "testtoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolong@test.com");
+        LocalDate dateGauvainDTO = LocalDate.now().minusYears(18);
+        UserDTO user = new UserDTO("Gauvain", dateGauvainDTO, "France", "0612345678", "man", "gauvinlechevalieraupancréasneuveuduroiarthuretgrandamidyvainetchevalierdelatablerondedekaamelott@kaamelott.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
@@ -428,48 +358,13 @@ class UserE2ETest {
     @Test
     void testCreateUserMailWrongFormat() throws Exception {
 
-        UserDTO user = new UserDTO("testcreation", dateDTO, "France", "0612345678", "man", "test.com");
+        LocalDate dateGuethenocDTO = LocalDate.now().minusYears(18);
+        UserDTO user = new UserDTO("Guethenoc", dateGuethenocDTO, "France", "0687654321", "man", "guethenoc.com");
 
         mockMvc.perform(post("/user")
                         .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
-    }
-
-    /**
-     * Test delete user
-     *
-     * @throws Exception if error occurs
-     */
-    @Test
-    void testDeleteUser() throws Exception {
-
-        mockMvc.perform(delete("/user/test"))
-                .andExpect(status().isNoContent());
-    }
-
-    /**
-     * Test fail if deletion user blank
-     *
-     * @throws Exception if error occurs
-     */
-    @Test
-    void testDeleteUserBlank() throws Exception {
-
-        mockMvc.perform(delete("/user/"))
-                .andExpect(status().isNotFound());
-    }
-
-    /**
-     * Test fail if deletion user not exist
-     *
-     * @throws Exception if error occurs
-     */
-    @Test
-    void testDeleteUserNotExist() throws Exception {
-
-        mockMvc.perform(delete("/user/testnotexist"))
-                .andExpect(status().isInternalServerError());
     }
 
 }
