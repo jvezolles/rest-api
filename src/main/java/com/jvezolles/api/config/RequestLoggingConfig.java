@@ -32,20 +32,18 @@ public class RequestLoggingConfig {
      */
     private ObjectMapper mapper;
 
-    /**
-     * Log GET incoming request
-     *
-     * @param joinPoint join point used with aspect
-     * @return result of method execution
-     * @throws Throwable if an error occurs
-     */
-    @Around("@annotation(org.springframework.web.bind.annotation.GetMapping)")
-    public Object logAroundGetMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+    private Object logAround(ProceedingJoinPoint joinPoint, String method, boolean isWithBody) throws Throwable {
 
         Object result = null;
+        String body = request.getReader().lines().collect(Collectors.joining());
 
         // Log incoming request
-        log.info("GET {}", request.getRequestURL());
+        if (isWithBody) {
+            log.info("-> {} {} with body : {}", method, request.getRequestURL(), body);
+        } else {
+            log.info("-> {} {}", method, request.getRequestURL());
+        }
+
         long startTime = System.currentTimeMillis();
 
         try {
@@ -57,8 +55,20 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("GET {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
+            log.info("<- {} {} in {}ms with body : {}", method, request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
         }
+    }
+
+    /**
+     * Log GET incoming request
+     *
+     * @param joinPoint join point used with aspect
+     * @return result of method execution
+     * @throws Throwable if an error occurs
+     */
+    @Around("@annotation(org.springframework.web.bind.annotation.GetMapping)")
+    public Object logAroundGetMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logAround(joinPoint, "GET", Boolean.FALSE);
     }
 
     /**
@@ -70,25 +80,31 @@ public class RequestLoggingConfig {
      */
     @Around("@annotation(org.springframework.web.bind.annotation.PostMapping)")
     public Object logAroundPostMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logAround(joinPoint, "POST", Boolean.TRUE);
+    }
 
-        Object result = null;
-        String body = request.getReader().lines().collect(Collectors.joining());
+    /**
+     * Log PATCH incoming request
+     *
+     * @param joinPoint join point used with aspect
+     * @return result of method execution
+     * @throws Throwable if an error occurs
+     */
+    @Around("@annotation(org.springframework.web.bind.annotation.PatchMapping)")
+    public Object logAroundPatchMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logAround(joinPoint, "PATCH", Boolean.TRUE);
+    }
 
-        // Log incoming request
-        log.info("POST {} with body : {}", request.getRequestURL(), body);
-        long startTime = System.currentTimeMillis();
-
-        try {
-            // Proceed method
-            result = joinPoint.proceed();
-            return result;
-
-        } finally {
-            long endtime = System.currentTimeMillis();
-
-            // Log end incoming request
-            log.info("POST {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
-        }
+    /**
+     * Log PUT incoming request
+     *
+     * @param joinPoint join point used with aspect
+     * @return result of method execution
+     * @throws Throwable if an error occurs
+     */
+    @Around("@annotation(org.springframework.web.bind.annotation.PutMapping)")
+    public Object logAroundPutMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+        return logAround(joinPoint, "PUT", Boolean.TRUE);
     }
 
     /**
@@ -100,21 +116,7 @@ public class RequestLoggingConfig {
      */
     @Around("@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
     public Object logAroundDeleteMapping(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        // Log incoming request
-        log.info("DELETE {}", request.getRequestURL());
-        long startTime = System.currentTimeMillis();
-
-        try {
-            // Proceed method
-            return joinPoint.proceed();
-
-        } finally {
-            long endtime = System.currentTimeMillis();
-
-            // Log end incoming request
-            log.info("DELETE {} in {}ms", request.getRequestURL(), endtime - startTime);
-        }
+        return logAround(joinPoint, "DELETE", Boolean.FALSE);
     }
 
 }
