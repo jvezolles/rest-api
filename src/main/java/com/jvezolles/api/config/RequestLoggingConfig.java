@@ -45,7 +45,7 @@ public class RequestLoggingConfig {
         Object result = null;
 
         // Log incoming request
-        log.info("GET {}", request.getRequestURL());
+        log.info("-> GET {}", request.getRequestURL());
         long startTime = System.currentTimeMillis();
 
         try {
@@ -57,7 +57,7 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("GET {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
+            log.info("<- GET {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
         }
     }
 
@@ -75,7 +75,7 @@ public class RequestLoggingConfig {
         String body = request.getReader().lines().collect(Collectors.joining());
 
         // Log incoming request
-        log.info("POST {} with body : {}", request.getRequestURL(), body);
+        log.info("-> POST {} with body : {}", request.getRequestURL(), body);
         long startTime = System.currentTimeMillis();
 
         try {
@@ -87,7 +87,67 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("POST {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
+            log.info("<- POST {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
+        }
+    }
+
+    /**
+     * Log PATCH incoming request
+     *
+     * @param joinPoint join point used with aspect
+     * @return result of method execution
+     * @throws Throwable if an error occurs
+     */
+    @Around("@annotation(org.springframework.web.bind.annotation.PatchMapping)")
+    public Object logAroundPatchMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        Object result = null;
+        String body = request.getReader().lines().collect(Collectors.joining());
+
+        // Log incoming request
+        log.info("-> PATCH {} with body : {}", request.getRequestURL(), body);
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // Proceed method
+            result = joinPoint.proceed();
+            return result;
+
+        } finally {
+            long endtime = System.currentTimeMillis();
+
+            // Log end incoming request
+            log.info("<- PATCH {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
+        }
+    }
+
+    /**
+     * Log PUT incoming request
+     *
+     * @param joinPoint join point used with aspect
+     * @return result of method execution
+     * @throws Throwable if an error occurs
+     */
+    @Around("@annotation(org.springframework.web.bind.annotation.PutMapping)")
+    public Object logAroundPutMapping(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        Object result = null;
+        String body = request.getReader().lines().collect(Collectors.joining());
+
+        // Log incoming request
+        log.info("-> PUT {} with body : {}", request.getRequestURL(), body);
+        long startTime = System.currentTimeMillis();
+
+        try {
+            // Proceed method
+            result = joinPoint.proceed();
+            return result;
+
+        } finally {
+            long endtime = System.currentTimeMillis();
+
+            // Log end incoming request
+            log.info("<- PUT {} in {}ms with body : {}", request.getRequestURL(), endtime - startTime, mapper.writeValueAsString(result));
         }
     }
 
@@ -102,7 +162,7 @@ public class RequestLoggingConfig {
     public Object logAroundDeleteMapping(ProceedingJoinPoint joinPoint) throws Throwable {
 
         // Log incoming request
-        log.info("DELETE {}", request.getRequestURL());
+        log.info("-> DELETE {}", request.getRequestURL());
         long startTime = System.currentTimeMillis();
 
         try {
@@ -113,7 +173,7 @@ public class RequestLoggingConfig {
             long endtime = System.currentTimeMillis();
 
             // Log end incoming request
-            log.info("DELETE {} in {}ms", request.getRequestURL(), endtime - startTime);
+            log.info("<- DELETE {} in {}ms", request.getRequestURL(), endtime - startTime);
         }
     }
 
