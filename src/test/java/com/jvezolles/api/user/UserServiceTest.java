@@ -304,8 +304,8 @@ class UserServiceTest {
     @Test
     void testReplaceUserNotFound() {
 
+        User userReplaced = new User(2L, "testreplace", date, "France", "0612345678", "female", "test@test.com");
         try {
-            User userReplaced = new User(2L, "testreplace", date, "France", "0612345678", "female", "test@test.com");
             userService.replaceUser("testnotfound", userReplaced);
             fail();
 
