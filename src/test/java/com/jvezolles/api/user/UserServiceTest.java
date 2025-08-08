@@ -1,8 +1,6 @@
 package com.jvezolles.api.user;
 
-import com.jvezolles.api.user.exception.UserCreateException;
-import com.jvezolles.api.user.exception.UserDeleteException;
-import com.jvezolles.api.user.exception.UserNotFoundException;
+import com.jvezolles.api.user.exception.*;
 import com.jvezolles.api.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -183,8 +181,8 @@ class UserServiceTest {
             userService.createUser(userNotAdult);
             fail();
 
-        } catch (UserCreateException e) {
-            assertEquals("User cannot be created, user must be adult French", e.getMessage());
+        } catch (UserNotFrenchAdultException e) {
+            assertEquals("User must be adult French", e.getMessage());
         }
     }
 
@@ -198,8 +196,121 @@ class UserServiceTest {
             userService.createUser(userNotFrench);
             fail();
 
-        } catch (UserCreateException e) {
-            assertEquals("User cannot be created, user must be adult French", e.getMessage());
+        } catch (UserNotFrenchAdultException e) {
+            assertEquals("User must be adult French", e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateUser() {
+
+        User userUpdate = new User(1L, "test", date, "France", "0612345678", "female", "test@test.com");
+
+        when(userRepository.save(userUpdate)).thenReturn(userUpdate);
+
+        User result = userService.updateUser(userUpdate);
+
+        verify(userRepository).save(userUpdate);
+        assertNotNull(result);
+        assertEquals(1L, result.getId().longValue());
+        assertEquals("test", result.getUsername());
+        assertEquals(date, result.getBirthdate());
+        assertEquals("France", result.getCountry());
+        assertEquals("0612345678", result.getPhone());
+        assertEquals("female", result.getGender());
+        assertEquals("test@test.com", result.getEmail());
+    }
+
+    @Test
+    void testUpdateUserNotExist() {
+
+        User userUpdate = new User(4L, "testupdate", date, "France", "0612345678", "female", "test@test.com");
+
+        try {
+            userService.updateUser(userUpdate);
+            fail();
+
+        } catch (UserUpdateException e) {
+            assertEquals("User cannot be updated, user not exists", e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateUserIllegalArgument() {
+
+        User userIllegalArgument = new User(1L, "test", date, "France", "0612345678", "man", "test@test.com");
+
+        doThrow(new IllegalArgumentException()).when(userRepository).save(userIllegalArgument);
+
+        try {
+            userService.updateUser(userIllegalArgument);
+            fail();
+
+        } catch (UserUpdateException e) {
+            assertEquals("User cannot be updated", e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateUserNotAdult() {
+
+        Date dateNotAdult = Date.from(LocalDate.of(2002, 1, 9).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+        User userNotAdult = new User(4L, "testnotadult", dateNotAdult, "France", "0612345678", "man", "test@test.com");
+
+        try {
+            userService.updateUser(userNotAdult);
+            fail();
+
+        } catch (UserNotFrenchAdultException e) {
+            assertEquals("User must be adult French", e.getMessage());
+        }
+    }
+
+    @Test
+    void testUpdateUserNotFrench() {
+
+        Date dateNotFrench = Date.from(LocalDate.of(2002, 1, 8).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
+        User userNotFrench = new User(5L, "testnotadult", dateNotFrench, "Spain", "0612345678", "man", "test@test.com");
+
+        try {
+            userService.updateUser(userNotFrench);
+            fail();
+
+        } catch (UserNotFrenchAdultException e) {
+            assertEquals("User must be adult French", e.getMessage());
+        }
+    }
+
+    @Test
+    void testReplaceUser() {
+
+        User userReplaced = new User(2L, "testreplace", date, "France", "0612345678", "female", "test@test.com");
+        when(userRepository.save(userReplaced)).thenReturn(userReplaced);
+
+        User result = userService.replaceUser("test", userReplaced);
+
+        verify(userRepository).delete(user);
+        verify(userRepository).save(userReplaced);
+        assertNotNull(result);
+        assertEquals(2L, result.getId().longValue());
+        assertEquals("testreplace", result.getUsername());
+        assertEquals(date, result.getBirthdate());
+        assertEquals("France", result.getCountry());
+        assertEquals("0612345678", result.getPhone());
+        assertEquals("female", result.getGender());
+        assertEquals("test@test.com", result.getEmail());
+    }
+
+    @Test
+    void testReplaceUserNotFound() {
+
+        User userReplaced = new User(2L, "testreplace", date, "France", "0612345678", "female", "test@test.com");
+        try {
+            userService.replaceUser("testnotfound", userReplaced);
+            fail();
+
+        } catch (UserReplaceException e) {
+            assertEquals("User cannot be replaced, User cannot be deleted, user does not exist", e.getMessage());
         }
     }
 

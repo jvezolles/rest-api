@@ -16,16 +16,26 @@ spring:
 server:
   error:
     include-message: always
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operationsSorter: method
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ info ]
+  info:
+    build:
+      enabled: true
+    git:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
 jvezolles:
   api:
     user:
       get-all: "/user"
       get: "/user/{username}"
       create: "/user"
+      update: "/user"
+      replace: "/user/{username}"
       delete: "/user/{username}"

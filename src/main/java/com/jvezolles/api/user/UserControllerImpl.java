@@ -28,11 +28,6 @@ public class UserControllerImpl implements UserController {
      */
     private UserService userService;
 
-    /**
-     * Api to get all user's details
-     *
-     * @return all users informations and status HTTP 200
-     */
     @Override
     @GetMapping(value = "${jvezolles.api.user.get-all}")
     @ResponseStatus(HttpStatus.OK)
@@ -45,13 +40,6 @@ public class UserControllerImpl implements UserController {
         return usersFound.stream().map(user -> userMapper.asUserDto(user)).toList();
     }
 
-
-    /**
-     * Api to get user's details
-     *
-     * @param username the username to get detail
-     * @return user's information and status HTTP 200
-     */
     @Override
     @GetMapping(value = "${jvezolles.api.user.get}")
     @ResponseStatus(HttpStatus.OK)
@@ -64,12 +52,6 @@ public class UserControllerImpl implements UserController {
         return userMapper.asUserDto(userFound);
     }
 
-    /**
-     * Api to create user
-     *
-     * @param user the user's details to create
-     * @return user's information for user created and status HTTP 201
-     */
     @Override
     @PostMapping(value = "${jvezolles.api.user.create}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -85,11 +67,36 @@ public class UserControllerImpl implements UserController {
         return userMapper.asUserDto(userCreated);
     }
 
-    /**
-     * Api to delete user, send status HTTP 204
-     *
-     * @param username the username to delete
-     */
+    @Override
+    @PatchMapping(value = "${jvezolles.api.user.update}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDTO updateUser(UserDTO user) {
+
+        // Transform DTO to User
+        User userReceived = userMapper.asUser(user);
+
+        // Call service to update user
+        User userUpdated = userService.updateUser(userReceived);
+
+        // Return user as DTO
+        return userMapper.asUserDto(userUpdated);
+    }
+
+    @Override
+    @PutMapping(value = "${jvezolles.api.user.replace}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDTO replaceUser(String username, UserDTO user) {
+
+        // Transform DTO to User
+        User userReceived = userMapper.asUser(user);
+
+        // Call service to replace user
+        User userReplaced = userService.replaceUser(username, userReceived);
+
+        // Return user as DTO
+        return userMapper.asUserDto(userReplaced);
+    }
+
     @Override
     @DeleteMapping(value = "${jvezolles.api.user.delete}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

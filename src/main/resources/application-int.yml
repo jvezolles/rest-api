@@ -2,7 +2,6 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost/restapis
     username: restapis
-    password: restapis
     driverClassName: org.postgresql.Driver
 logging:
   level:
