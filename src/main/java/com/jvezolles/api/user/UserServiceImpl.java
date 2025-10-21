@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
      * @throws UserNotFoundException if user doesn't exist
      */
     @Override
-    public User getUser(String username) throws UserNotFoundException {
+    public User loadUserByUsername(String username) throws UserNotFoundException {
 
         // Find user if exists, else throw error user not found
         return userRepository.findByUsername(username.toLowerCase())

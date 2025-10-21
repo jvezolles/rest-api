@@ -3,5 +3,5 @@ databaseChangeLog:
       - runningAs:
           username: restapis
   - include:
-      file: version/db.changelog.version-0.0.1.yaml
+      file: version/db.changelog.version-0.0.1.yml
       relativeToChangelogFile: true

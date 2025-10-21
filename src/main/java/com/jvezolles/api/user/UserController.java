@@ -43,6 +43,7 @@ public interface UserController {
      * Api to create user
      *
      * @param user the user's details to create, must be valid
+     * @return user's information
      */
     @ResponseBody
     UserDTO createUser(@RequestBody @Valid UserDTO user);
@@ -51,6 +52,7 @@ public interface UserController {
      * Api to update user
      *
      * @param user the user's details to update, must be valid
+     * @return user's information
      */
     @ResponseBody
     UserDTO updateUser(@RequestBody @Valid UserDTO user);
@@ -60,6 +62,7 @@ public interface UserController {
      *
      * @param username the username to replace, must be size max = 100
      * @param user the user's details to replace, must be valid
+     * @return user's information
      */
     @ResponseBody
     UserDTO replaceUser(@PathVariable @Valid @Size(max = 100, message = "{user.username.size}") String username, @RequestBody @Valid UserDTO user);

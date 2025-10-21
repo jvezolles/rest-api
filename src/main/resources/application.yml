@@ -9,7 +9,7 @@ spring:
       ddl-auto: create-drop
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: classpath:db/changelog/db.changelog-master.yml
   sql:
     init:
       encoding: UTF-8
@@ -19,6 +19,7 @@ server:
 management:
   endpoints:
     web:
+      base-path: "/private/actuator"
       exposure:
         include: [ info ]
   info:
@@ -31,9 +32,9 @@ management:
 jvezolles:
   api:
     user:
-      get-all: "/user"
-      get: "/user/{username}"
-      create: "/user"
-      update: "/user"
-      replace: "/user/{username}"
-      delete: "/user/{username}"
+      get-all: "/public/user"
+      get: "/public/user/{username}"
+      create: "/public/user"
+      update: "/public/user"
+      replace: "/public/user/{username}"
+      delete: "/public/user/{username}"

@@ -66,11 +66,11 @@ class UserControllerTest {
     @Test
     void testGetUser() {
 
-        when(userService.getUser("test")).thenReturn(user);
+        when(userService.loadUserByUsername("test")).thenReturn(user);
 
         UserDTO result = userController.getUser("test");
 
-        verify(userService).getUser("test");
+        verify(userService).loadUserByUsername("test");
         assertNotNull(result);
         assertEquals("test", result.username());
         assertEquals(dateDTO, result.birthdate());

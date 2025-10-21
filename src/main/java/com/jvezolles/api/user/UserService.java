@@ -2,6 +2,7 @@ package com.jvezolles.api.user;
 
 import com.jvezolles.api.user.exception.*;
 import com.jvezolles.api.user.model.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * Service for users, make processing
  * @author Vezolles
  */
-public interface UserService {
+public interface UserService extends UserDetailsService {
 	
 	/**
 	 * Service to get all user's details
@@ -26,7 +27,7 @@ public interface UserService {
 	 * @return user'information
 	 * @throws UserNotFoundException if user doesn't exist
 	 */
-	User getUser(String username) throws UserNotFoundException;
+	User loadUserByUsername(String username) throws UserNotFoundException;
     
 	/**
 	 * Service to create user

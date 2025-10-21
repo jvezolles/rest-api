@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: ../features/create-user-table.yml
+      relativeToChangelogFile: true
+  - include:
+      file: ../features/add-user-default.yml
+      relativeToChangelogFile: true

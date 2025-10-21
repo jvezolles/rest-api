@@ -99,7 +99,7 @@ class UserServiceTest {
     @Test
     void testGetUser() {
 
-        User result = userService.getUser("test");
+        User result = userService.loadUserByUsername("test");
 
         assertNotNull(result);
         assertEquals(1L, result.getId().longValue());
@@ -115,7 +115,7 @@ class UserServiceTest {
     void testGetUserNotFound() {
 
         try {
-            userService.getUser("testnotfound");
+            userService.loadUserByUsername("testnotfound");
             fail();
 
         } catch (UserNotFoundException e) {

@@ -46,7 +46,7 @@ public class UserControllerImpl implements UserController {
     public UserDTO getUser(String username) {
 
         // Call service to get user
-        User userFound = userService.getUser(username);
+        User userFound = userService.loadUserByUsername(username);
 
         // Return user as DTO
         return userMapper.asUserDto(userFound);
