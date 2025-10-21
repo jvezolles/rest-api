@@ -5,7 +5,6 @@ spring:
     show-sql: false
     open-in-view: false
     hibernate:
-
       ddl-auto: create-drop
   liquibase:
     enabled: true
