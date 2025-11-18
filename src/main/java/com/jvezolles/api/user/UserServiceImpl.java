@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
                 // Persist new user
                 return userRepository.save(user);
 
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException _) {
                 throw new UserCreateException("User cannot be created");
             }
 
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
                 // Persist updated user
                 return userRepository.save(user);
 
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException _) {
                 throw new UserUpdateException("User cannot be updated");
             }
 
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
             // Delete user
             userRepository.delete(userFound);
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException _) {
             throw new UserDeleteException("User cannot be deleted");
         }
     }
